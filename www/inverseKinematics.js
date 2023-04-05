@@ -1,7 +1,11 @@
 function setup() {
 	createCanvas(900, 900);
 	frameRate(1000)
-	textAlign(CENTER, CENTER);
+	var parent = document.getElementById('canvas-holder');
+	var sketchCanvas = createCanvas(parent.offsetWidth, parent.offsetHeight);
+	sketchCanvas.parent("canvas-holder");
+
+
 }
 
 const r1 = 150;
@@ -44,7 +48,7 @@ function trackPoint() {
 
 function getInput() {
 	//move target point following mouse
-	mouseV = createVector(mouseX - r1, mouseY - r1);
+	mouseV = createVector(mouseX - r1 - 10, mouseY - r1 - 10);
 	mouseV.limit(r1 - 5);
 	tx -= (tx - mouseV.x) / inputSmoothing;
 	ty -= (ty - mouseV.y) / inputSmoothing;
@@ -65,9 +69,10 @@ function drawPrinter() {
 	text("E", -r1 + 10, 0);
 	text("W", +r1 - 10, 0);
 
+
 	fill(0, 200, 200, 100);
 	textSize(50);
-	text("x", tx, ty);
+	text("×", tx, ty);
 
 	resetMatrix();
 
@@ -105,7 +110,7 @@ function drawPrinter() {
 	//Draw the calculated position of the target after rotating plate
 	translate(r1 * 4, r1 + 10);
 	fill(0, 200, 200, 100);
-	text("x", p1x, p1y);
+	text("×", p1x, p1y);
 	resetMatrix();
 
 	//Draw the calculated position of the head
