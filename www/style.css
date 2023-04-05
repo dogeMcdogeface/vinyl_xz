@@ -3,3 +3,12 @@ body {
 	margin: 0;
 	padding: 0;
 }
+
+#canvas-holder {
+	height: 600px;
+	width: auto;
+}
+
+p {
+	padding-left: 1ch;
+}
