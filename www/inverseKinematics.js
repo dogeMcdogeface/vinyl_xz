@@ -1,5 +1,5 @@
 function setup() {
-	createCanvas(1000, 1000);
+	createCanvas(900, 900);
 	frameRate(1000)
 	textAlign(CENTER, CENTER);
 }
@@ -54,7 +54,7 @@ function drawPrinter() {
 	textAlign(CENTER, CENTER);
 
 	//Draw the user input
-	translate(r1, r1);
+	translate(r1 + 10, r1 + 10);
 	fill(255, 255, 255);
 	circle(0, 0, r1 * 2);
 	line(0, 0, 0, -r1);
@@ -72,7 +72,7 @@ function drawPrinter() {
 	resetMatrix();
 
 	//Draw the build plate
-	translate(width / 2, height / 2);
+	translate(r1 * 4, r1 + 10);
 	rotate(a1);
 	fill(255, 255, 255);
 	circle(0, 0, r1 * 2);
@@ -88,13 +88,14 @@ function drawPrinter() {
 	fill(0, 200, 200, 100);
 	textSize(50);
 	//Draw the target point on the plate
-	translate(width / 2, height / 2);
+	translate(r1 * 4, r1 + 10);
 	rotate(a1);
 	resetMatrix();
 
 	//Draw the rotating head
 	fill(100, 100, 0, 50);
-	translate(width / 2, height / 2 + r2);
+	translate(r1 * 4, r1 + 10);
+	translate(0, r2);
 	rotate(a2);
 	//circle(0,0, r2*2);
 	arc(0, 0, r2 * 2, r2 * 2, -PI / 2 - PI / 4, -PI / 2 + PI / 4);
@@ -102,13 +103,13 @@ function drawPrinter() {
 	resetMatrix();
 
 	//Draw the calculated position of the target after rotating plate
-	translate(width / 2, height / 2);
+	translate(r1 * 4, r1 + 10);
 	fill(0, 200, 200, 100);
 	text("x", p1x, p1y);
 	resetMatrix();
 
 	//Draw the calculated position of the head
-	translate(width / 2, height / 2);
+	translate(r1 * 4, r1 + 10);
 	fill(200, 0, 0, 100);
 	text("+", hx, hy);
 	resetMatrix();
@@ -116,19 +117,17 @@ function drawPrinter() {
 
 function drawDebug() {
 	debugString = "";
-	debugString += "a1: " + round(a1 * 180 / PI, 2) + "°\n";
-	debugString += "a2: " + round(a2 * 180 / PI, 2) + "°\n\n";
+	debugString += "plate angle:	" + round(a1 * 180 / PI, 2) + "°\n";
+	debugString += "head angle:	" + round(a2 * 180 / PI, 2) + "°\n\n";
 	debugString += "tx:" + round(tx, 0) + "\n";
 	debugString += "ty:" + round(ty, 0) + "\n";
 
-	textX = width / 2;
-	textY = 10;
-	textLines = (debugString.match(/\n/g) || []).length - 1;
-
+	translate(20, r1 + r2 + 50);
 	textAlign(LEFT, TOP);
 	textSize(20);
 	fill(0, 100);
-	rect(textX - 10, textY - 10, 200, textAscent() * textLines);
+	rect(-10, -10, width - 20, height - r1 - 50 - r2);
 	fill(255);
-	text(debugString, textX, textY);
+	text(debugString, 0, 0);
+	resetMatrix();
 }
