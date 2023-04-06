@@ -19,7 +19,7 @@ let ty = 0; //
 
 
 function setup() {
-	var sketchCanvas = createCanvas(r1*5 +20 , r1 + r2 + 100);
+	var sketchCanvas = createCanvas(r1 * 5 + 20, r1 + r2 + 100);
 	sketchCanvas.parent(document.getElementById('canvas-holder'));
 	frameRate(1000);
 	textAlign(CENTER, CENTER);
@@ -100,7 +100,7 @@ function drawPrinter() {
 	//--------- DRAW USER INPUT ----------------------------------------//
 	translate(10, 30);
 	push();
-	translate(r1,r1);
+	translate(r1, r1);
 	stroke(0, 0);
 	fill(200);
 	textSize(20);
@@ -109,7 +109,7 @@ function drawPrinter() {
 	stroke(50, 50);
 	targets.forEach(point => drawPT(1, 5, point.x, point.y));
 	stroke(0, 200, 200, 100);
-	if(targets.length ==0)stroke(0, 0, 200, 100);
+	if (targets.length == 0) stroke(0, 0, 200, 100);
 	drawPT(1, 10, tx, ty);
 	pop();
 
@@ -160,6 +160,12 @@ function drawPrinter() {
 let debugObj = {};
 
 function debug() {
+	debugObj.target = {
+		x: `${round(tx, 0)}`,
+		y: `${round(ty, 0)}`,
+		curr: `${currentTarget} / ${targets.length}`,
+	};
+
 	debugObj.plate = {
 		angle: `${round(pa * 180 / PI, 0)}°`,
 		goal: `${round(paD * 180 / PI, 0)}°`,
@@ -172,12 +178,6 @@ function debug() {
 		error: `${round((ha - haD) * 180 / PI, 2)}°`
 	};
 
-	debugObj.target = {
-		curr: `${currentTarget}`,
-		tot: `${targets.length}`,
-		x: `${round(tx, 0)}`,
-		y: `${round(ty, 0)}`,
-	};
 	displayDebug(debugObj);
 }
 
