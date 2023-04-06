@@ -1,5 +1,11 @@
 html {
-	margin: ;
+	margin: 0;
+	padding: 0;
+}
+
+h2,
+p {
+	margin: 1ch;
 	padding: 0;
 }
 
@@ -30,22 +36,25 @@ p {
 
 #debug-holder {
 	flex: 100 100 auto;
-		color: white;
-background-color: #363535;
+	color: white;
+	background-color: #363535;
 }
 
 #debug-holder table {
 	width: 100%;
 	flex: 100 100 auto;
 	border-collapse: collapse;
-	    text-transform: capitalize;
+	text-transform: capitalize;
 	font-family: monospace, monospace;
 }
 
 #debug-holder table td {
 	border: 1px solid lightgray;
+	min-width: 8ch;
 }
 
-.var{
-	min-width: 7ch;
+.var {
+	text-align: center;
+	background-color: #4E4C4C;
+
 }
