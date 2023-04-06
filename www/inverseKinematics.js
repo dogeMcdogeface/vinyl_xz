@@ -1,24 +1,27 @@
-function setup() {
-	createCanvas(900, 900);
-	frameRate(1000)
-	/*var parent = document.getElementById('canvas-holder');
-	var sketchCanvas = createCanvas(parent.offsetWidth, parent.offsetHeight);
-	sketchCanvas.parent("canvas-holder");*/
-}
-
 const r1 = 150;
 const r2 = 200;
 
 const inputSmoothing = 5.
 
-a1 = 0.0; //plate angle
-a2 = 0.0; //head angle
+
+function setup() {
+	var parent = document.getElementById('canvas-holder');
+	if(parent){
+		var sketchCanvas = createCanvas(parent.offsetWidth, parent.offsetHeight);
+		sketchCanvas.parent("canvas-holder");
+	}else{
+		createCanvas(900, 900);
+	}
+	frameRate(1000)
+}
+
+pa = 0.0; //Current plate angle
+ha = 0.0; //Current head angle
+paD = 0.0; //Desired plate angle
+haD = 0.0; //Desired head angle
 tx = 0; //target position on the build plate
 ty = 0; //
-p1x = 0; //target position in space (as plate rotates)
-p1y = 0; //
-hx = 0; //head position
-hy = 0; //
+
 
 function draw() {
 	background(70);
@@ -32,15 +35,15 @@ function trackPoint() {
 	//distance of target from center of plate
 	to = sqrt(tx * tx + ty * ty);
 	//find for what head angle the head is at the same distance from center as the target
-	a2 = acos(((2 * r2 * r2) - (to * to)) / (2 * r2 * r2));
+	ha = acos(((2 * r2 * r2) - (to * to)) / (2 * r2 * r2));
 	//track the position of the head after rotating
-	hx = sin(a2) * (r2);
-	hy = -cos(a2) * (r2) + r2;
+	hx = sin(ha) * (r2);
+	hy = -cos(ha) * (r2) + r2;
 	//rotate the plate to meet head
-	a1 = PI - (2 * atan((sqrt(tx * tx + ty * ty - hx * hx) + ty) / (tx - hx)));
+	pa = PI - (2 * atan((sqrt(tx * tx + ty * ty - hx * hx) + ty) / (tx - hx)));
 	//track the position of our target after rotating the plate
-	p1x = cos(a1) * (tx) - sin(a1) * (ty);
-	p1y = sin(a1) * (tx) + cos(a1) * (ty);
+	tx1 = cos(pa) * (tx) - sin(pa) * (ty);
+	ty1 = sin(pa) * (tx) + cos(pa) * (ty);
 }
 
 
@@ -73,7 +76,7 @@ function drawPrinter() {
 	text("E", -r1 + 10, 0);
 	text("W", +r1 - 10, 0);
 	stroke(0, 200, 200, 100);
-	drawX(1, tx, ty);
+	drawX(1, 10, tx, ty);
 	resetMatrix();
 
 
@@ -83,7 +86,8 @@ function drawPrinter() {
 	fill(200);
 	textSize(20);
 	text("BUILD PLATE + PRINT HEAD", 0, -r1 - 15);
-	rotate(a1);
+	push();
+	rotate(pa);
 	stroke(0);
 	fill(255, 255, 255);
 	circle(0, 0, r1 * 2);
@@ -95,55 +99,67 @@ function drawPrinter() {
 	text("S", 0, +r1 - 10);
 	text("E", -r1 + 10, 0);
 	text("W", +r1 - 10, 0);
-
+	fill(0, 0);
+	stroke(0, 255, 255);
+	setLineDash([10, 10]);
+	arc(0, 0, r1 * 2 + 5, r1 * 2 + 5, -HALF_PI - pa, -HALF_PI);
+	setLineDash([0]); //longer stitches
 	//Draw the calculated position of the target after rotating plate
-	stroke(0, 200, 200, 100);
-	drawX(1, tx, ty);
+	stroke(0, 200, 200);
+	drawX(1, 10, tx, ty);
 	resetMatrix();
 
 
 	//Draw the rotating head
-	stroke(0);
-	fill(100, 100, 0, 50);
 	translate(r1 * 4, r1 + 30);
 	translate(0, r2);
-	rotate(a2);
-	//circle(0,0, r2*2);
-	arc(0, 0, r2 * 2, r2 * 2, -PI / 2 - PI / 4, -PI / 2 + PI / 4);
+	rotate(ha);
+	stroke(0, 0);
+	fill(100);
+	circle(0, 0, 30);
+	fill(100, 100);
+	rect(-10, 0, 20, -r2);
+	fill(0, 0);
+	stroke(200, 0, 0);
 	line(0, 0, 0, -r2);
-	resetMatrix();
-
-
-	//Draw the calculated position of the head
-	translate(r1 * 4, r1 + 30);
+	setLineDash([10, 10]);
+	//circle(0, 0, r2 * 2);
+	arc(0, 0, r2 * 2, r2 * 2, -HALF_PI - ha, -HALF_PI);
+	setLineDash([0]); //longer stitches
 	stroke(200, 0, 0, 100);
-	drawX(2, hx, hy);
+	drawX(0, 5, 0, -r2);
 	resetMatrix();
 }
 
 function drawDebug() {
 	debugString = "";
-	debugString += "plate angle:	" + round(a1 * 180 / PI, 2) + "°\n";
-	debugString += "head angle:	" + round(a2 * 180 / PI, 2) + "°\n\n";
+	debugString += "plate angle:	" + round(pa * 180 / PI, 2) + "°\n";
+	debugString += "head angle:	" + round(ha * 180 / PI, 2) + "°\n\n";
 	debugString += "tx:" + round(tx, 0) + "\n";
 	debugString += "ty:" + round(ty, 0) + "\n";
 
 	translate(20, r1 + r2 + 50);
 	textAlign(LEFT, TOP);
 	textSize(20);
+	stroke(0);
 	fill(0, 100);
 	rect(-10, -10, width - 20, height - r1 - 50 - r2);
+	noStroke();
 	fill(255);
 	text(debugString, 0, 0);
 	resetMatrix();
 }
 
-function drawX(a, x, y) {
+function drawX(a, s, x, y) {
 	push();
 	translate(x, y);
 	rotate(QUARTER_PI * a);
-	strokeWeight(3);
-	line(-10, 0, 10, 0);
-	line(0, -10, 0, 10);
+	strokeWeight(2);
+	line(-s, 0, s, 0);
+	line(0, -s, 0, s);
 	pop();
+}
+
+function setLineDash(list) {
+	drawingContext.setLineDash(list);
 }
