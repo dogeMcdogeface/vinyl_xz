@@ -1,19 +1,27 @@
 let debugHolder = document.getElementById("debug-holder");
 
+
 function displayDebug(obj) {
 	debugHolder.innerHTML = "";
-	table = document.createElement('table');
-	for (const fieldName in obj) {
-		const field = obj[fieldName];
-		row = table.insertRow();
-				const td = row.insertCell();
-			td.appendChild(document.createTextNode(`${fieldName}`));
-		
-		for (const subFieldName in field) { // Loop through each sub-field in the field
-			const subField = field[subFieldName];
-			const td = row.insertCell();
-			td.appendChild(document.createTextNode(`${subFieldName} ${subField}`));
-			td.appendChild(document.createTextNode(`${subFieldName} ${subField}`));
+	const table = document.createElement('table');
+
+	for (const [key, value] of Object.entries(obj)) {
+		const row = table.insertRow();
+		row.insertCell().appendChild(document.createTextNode(`${key}`));
+
+		for (const [subKey, subValue] of Object.entries(value)) {
+			/*const td = row.insertCell();
+			const vararea = document.createElement("div");
+			vararea.innerText = `${subKey}`;
+			vararea.classList.add("var");
+			td.append(vararea, document.createTextNode(`${subValue}`));*/
+
+
+			const keyEl = document.createElement("div");
+			keyEl.innerText = `${subKey}`;
+			keyEl.classList.add("var");
+			row.insertCell().append(keyEl, subValue);
+
 		}
 	}
 	debugHolder.appendChild(table);
