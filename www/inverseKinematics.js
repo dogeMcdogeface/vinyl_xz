@@ -57,52 +57,53 @@ function drawPrinter() {
 
 	//Draw the user input
 	translate(r1 + 10, r1 + 30);
+	stroke(0, 0);
 	fill(200);
 	textSize(20);
 	text("BUILD PLATE", 0, -r1 - 15);
+	stroke(0);
 	fill(255, 255, 255);
 	circle(0, 0, r1 * 2);
 	line(0, 0, 0, -r1);
+	stroke(0, 0);
 	fill(200);
 	textSize(15);
 	text("N", 0, -r1 + 10);
 	text("S", 0, +r1 - 10);
 	text("E", -r1 + 10, 0);
 	text("W", +r1 - 10, 0);
-
-
-
-	fill(0, 200, 200, 100);
-	textSize(50);
-	text("×", tx, ty);
-
+	stroke(0, 200, 200, 100);
+	drawX(1, tx, ty);
 	resetMatrix();
+
 
 	//Draw the build plate
 	translate(r1 * 4, r1 + 30);
+	stroke(0, 0);
 	fill(200);
 	textSize(20);
 	text("BUILD PLATE + PRINT HEAD", 0, -r1 - 15);
 	rotate(a1);
+	stroke(0);
 	fill(255, 255, 255);
 	circle(0, 0, r1 * 2);
 	line(0, 0, 0, -r1);
+	noStroke();
 	fill(200);
 	textSize(15);
 	text("N", 0, -r1 + 10);
 	text("S", 0, +r1 - 10);
 	text("E", -r1 + 10, 0);
 	text("W", +r1 - 10, 0);
+
+	//Draw the calculated position of the target after rotating plate
+	stroke(0, 200, 200, 100);
+	drawX(1, tx, ty);
 	resetMatrix();
 
-	fill(0, 200, 200, 100);
-	textSize(50);
-	//Draw the target point on the plate
-	translate(r1 * 4, r1 + 30);
-	rotate(a1);
-	resetMatrix();
 
 	//Draw the rotating head
+	stroke(0);
 	fill(100, 100, 0, 50);
 	translate(r1 * 4, r1 + 30);
 	translate(0, r2);
@@ -112,16 +113,11 @@ function drawPrinter() {
 	line(0, 0, 0, -r2);
 	resetMatrix();
 
-	//Draw the calculated position of the target after rotating plate
-	translate(r1 * 4, r1 + 30);
-	fill(0, 200, 200, 100);
-	text("×", p1x, p1y);
-	resetMatrix();
 
 	//Draw the calculated position of the head
 	translate(r1 * 4, r1 + 30);
-	fill(200, 0, 0, 100);
-	text("+", hx, hy);
+	stroke(200, 0, 0, 100);
+	drawX(2, hx, hy);
 	resetMatrix();
 }
 
@@ -140,4 +136,14 @@ function drawDebug() {
 	fill(255);
 	text(debugString, 0, 0);
 	resetMatrix();
+}
+
+function drawX(a, x, y) {
+	push();
+	translate(x, y);
+	rotate(QUARTER_PI * a);
+	strokeWeight(3);
+	line(-10, 0, 10, 0);
+	line(0, -10, 0, 10);
+	pop();
 }
