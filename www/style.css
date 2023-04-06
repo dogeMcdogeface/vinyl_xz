@@ -1,14 +1,45 @@
-html,
-body {
-	margin: 0;
+html {
+	margin: ;
 	padding: 0;
 }
 
-#canvas-holder {
-	height: 600px;
-	width: auto;
+body {
+	margin: 3px;
+	padding: 0;
+	box-sizing: border-box;
 }
 
 p {
 	padding-left: 1ch;
+}
+
+#content {
+	height: auto;
+	width: auto;
+	display: flex;
+	flex-wrap: wrap;
+}
+
+#canvas-holder {
+	flex: 1 1 auto;
+}
+
+#debug-holder {
+	/*color: white;
+background-color: #2b2b2b;*/
+	flex: 100 100 auto;
+}
+
+#debug-holder table {
+	width: 100%;
+	color: white;
+	background-color: #2b2b2b;
+	flex: 100 100 auto;
+	table-layout: fixed;
+	border-collapse: collapse;
+}
+
+#debug-holder table td {
+	border: 1px solid lightgray;
+	/* add this line */
 }
