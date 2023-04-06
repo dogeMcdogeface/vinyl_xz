@@ -19,14 +19,10 @@ let ty = 0; //
 
 
 function setup() {
-	var parent = document.getElementById('canvas-holder');
-	if (parent) {
-		var sketchCanvas = createCanvas(parent.offsetWidth, parent.offsetHeight);
-		sketchCanvas.parent("canvas-holder");
-	} else {
-		createCanvas(900, 900);
-	}
+	var sketchCanvas = createCanvas(r1*5 +20 , r1 + r2 + 100);
+	sketchCanvas.parent(document.getElementById('canvas-holder'));
 	frameRate(1000);
+	textAlign(CENTER, CENTER);
 }
 
 function draw() {
@@ -35,7 +31,7 @@ function draw() {
 	trackTarget();
 	movePrinter();
 	drawPrinter();
-	drawDebug();
+	debug();
 }
 
 
@@ -70,7 +66,7 @@ function movePrinter() { //Simulate real component movement
 
 
 //----------- GET TARGET TO TRACK FROM MOUSE INPUT --------------------------------------------------//
-function getTarget() { //Get a target point 
+function getTarget() {
 	let mouseV = createVector(mouseX - r1 - 10, mouseY - r1 - 30);
 	mouseV.limit(r1 - 5);
 
@@ -101,125 +97,92 @@ function getTarget() { //Get a target point
 
 //----------- DRAW GRAPHICS -------------------------------------------------------------------------//
 function drawPrinter() {
-	textAlign(CENTER, CENTER);
-	//Draw the user input
-	translate(r1 + 10, r1 + 30);
+	//--------- DRAW USER INPUT ----------------------------------------//
+	translate(10, 30);
+	push();
+	translate(r1,r1);
 	stroke(0, 0);
 	fill(200);
 	textSize(20);
 	text("BUILD PLATE", 0, -r1 - 15);
-	stroke(0);
-	fill(255, 255, 255);
-	circle(0, 0, r1 * 2);
-	line(0, 0, 0, -r1);
-	stroke(0, 0);
-	fill(200);
-	textSize(15);
-	text("N", 0, -r1 + 10);
-	text("S", 0, +r1 - 10);
-	text("E", -r1 + 10, 0);
-	text("W", +r1 - 10, 0);
+	drawPlate(r1);
 	stroke(50, 50);
-	targets.forEach(point => drawX(1, 5, point.x, point.y));
+	targets.forEach(point => drawPT(1, 5, point.x, point.y));
 	stroke(0, 200, 200, 100);
-	drawX(1, 10, tx, ty);
-	resetMatrix();
+	if(targets.length ==0)stroke(0, 0, 200, 100);
+	drawPT(1, 10, tx, ty);
+	pop();
 
-
-	//Draw the build plate
+	//--------- DRAW BUILD TABLE ---------------------------------------//
 	translate(r1 * 4, r1 + 30);
+	push();
 	stroke(0, 0);
 	fill(200);
 	textSize(20);
 	text("BUILD PLATE + PRINT HEAD", 0, -r1 - 15);
-	push();
 	rotate(pa);
-	stroke(0);
-	fill(255, 255, 255);
-	circle(0, 0, r1 * 2);
-	line(0, 0, 0, -r1);
-	noStroke();
-	fill(200);
-	textSize(15);
-	text("N", 0, -r1 + 10);
-	text("S", 0, +r1 - 10);
-	text("E", -r1 + 10, 0);
-	text("W", +r1 - 10, 0);
+	drawPlate(r1);
 	fill(0, 0);
 	stroke(50, 50);
-	fill(0, 0);
-	beginShape();
-	targets.forEach(point => vertex(point.x, point.y));
-	endShape();
-	//targets.forEach(point => drawX(1, 5,point.x,point.y));stroke(0, 200, 200);
+	for (let i = 1; i < targets.length; i++) {
+		if (i > currentTarget) stroke(0, 200, 200, 100);
+		line(targets[i].x, targets[i].y, targets[i - 1].x, targets[i - 1].y);
+	}
 	stroke(0, 200, 200, 100);
-	drawX(1, 10, tx, ty);
-	resetMatrix();
+	drawPT(1, 10, tx, ty);
+	pop();
 
-	//Draw the rotating head
-	translate(r1 * 4, r1 + 30);
+	//--------- DRAW PRINT HEAD ----------------------------------------//
+	push();
 	translate(0, r2);
 	rotate(ha);
-	stroke(0, 0);
-	fill(100);
-	circle(0, 0, 30);
-	fill(100, 100);
-	rect(-10, 0, 20, -r2);
+	drawHead(r2);
+	drawPT(0, 5, 0, -r2);
+	pop();
+
+	//--------- DRAW DESIRED PLATE ANGLE -------------------------------//
+	push();
+	fill(0, 0);
+	stroke(0, 255, 255);
+	drawAngle(r1 * 2 + 5, paD);
+	pop();
+
+	//--------- DRAW DESIRED HEAD ANGLE --------------------------------//
+	push();
+	translate(0, r2);
 	fill(0, 0);
 	stroke(200, 0, 0);
-	line(0, 0, 0, -r2);
-	drawX(0, 5, 0, -r2);
-	resetMatrix();
-
-
-	//Draw Desired plate angle
-	translate(r1 * 4, r1 + 30);
-	stroke(0, 255, 255);
-	setLineDash([10, 10]);
-	arc(0, 0, r1 * 2 + 5, r1 * 2 + 5, -HALF_PI, -HALF_PI + paD);
-	setLineDash([0]);
-	resetMatrix();
-
-	//Draw Desired head angle
-	translate(r1 * 4, r1 + 30);
-	translate(0, r2);
-	stroke(200, 0, 0);
-	setLineDash([10, 10]);
-	//circle(0, 0, r2 * 2);
-	arc(0, 0, r2 * 2, r2 * 2, -HALF_PI, -HALF_PI + haD);
-	setLineDash([0]); //longer stitches
-	resetMatrix();
+	drawAngle(r2 * 2, haD);
+	pop();
 }
 
 //----------- PRINT DEBUG INFO ----------------------------------------------------------------------//
-function drawDebug() {
-	debugString = "";
-	debugString += "plate angle:	" + round(pa * 180 / PI, 2) + "°\n";
-	debugString += "plate goal:		" + round(paD * 180 / PI, 2) + "°\n";
-	debugString += "plate error:	" + round((pa - paD) * 180 / PI, 2) + "°\n\n";
+let debugObj = {};
 
-	debugString += "head angle:	" + round(ha * 180 / PI, 2) + "°\n";
-	debugString += "head goal:	" + round(haD * 180 / PI, 2) + "°\n";
-	debugString += "head error:	" + round((ha - haD) * 180 / PI, 2) + "°\n\n";
+function debug() {
+	debugObj.plate = {
+		angle: `${round(pa * 180 / PI, 0)}°`,
+		goal: `${round(paD * 180 / PI, 0)}°`,
+		error: `${round((pa - paD) * 180 / PI, 2)}°`
+	};
 
-	debugString += "target:	" + currentTarget + "	/	" + targets.length + "\n";
-	debugString += "tx:" + round(tx, 0) + "\n";
-	debugString += "ty:" + round(ty, 0) + "\n\n";
+	debugObj.head = {
+		angle: `${round(ha * 180 / PI, 0)}°`,
+		goal: `${round(haD * 180 / PI, 0)}°`,
+		error: `${round((ha - haD) * 180 / PI, 2)}°`
+	};
 
-	translate(20, r1 + r2 + 50);
-	textAlign(LEFT, TOP);
-	textSize(20);
-	stroke(0);
-	fill(0, 100);
-	rect(-10, -10, width - 20, height - r1 - 50 - r2);
-	noStroke();
-	fill(255);
-	text(debugString, 0, 0);
-	resetMatrix();
+	debugObj.target = {
+		curr: `${currentTarget}`,
+		tot: `${targets.length}`,
+		x: `${round(tx, 0)}`,
+		y: `${round(ty, 0)}`,
+	};
+	displayDebug(debugObj);
 }
 
 //----------- UTILITY FUNCTIONS ---------------------------------------------------------------------//
-function drawX(a, s, x, y) {
+function drawPT(a, s, x, y) {
 	push();
 	translate(x, y);
 	rotate(QUARTER_PI * a);
@@ -229,8 +192,35 @@ function drawX(a, s, x, y) {
 	pop();
 }
 
-function setLineDash(list) {
-	drawingContext.setLineDash(list);
+function drawAngle(r, a) {
+	drawingContext.setLineDash([10, 10]);
+	arc(0, 0, r, r, -HALF_PI, -HALF_PI + a);
+	drawingContext.setLineDash([0]);
+}
+
+function drawPlate(r) {
+	stroke(0);
+	fill(255, 255, 255);
+	circle(0, 0, r * 2);
+	line(0, 0, 0, -r);
+	noStroke();
+	fill(200);
+	textSize(15);
+	text("N", 0, -r + 10);
+	text("S", 0, +r - 10);
+	text("E", -r + 10, 0);
+	text("W", +r - 10, 0);
+}
+
+function drawHead(r) {
+	stroke(0, 0);
+	fill(100);
+	circle(0, 0, 30);
+	fill(100, 100);
+	rect(-10, 0, 20, -r);
+	fill(0, 0);
+	stroke(200, 0, 0);
+	line(0, 0, 0, -r);
 }
 
 function normalizeAngle(a) {
