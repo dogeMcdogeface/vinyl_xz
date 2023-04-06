@@ -1,11 +1,9 @@
 function setup() {
 	createCanvas(900, 900);
 	frameRate(1000)
-	var parent = document.getElementById('canvas-holder');
+	/*var parent = document.getElementById('canvas-holder');
 	var sketchCanvas = createCanvas(parent.offsetWidth, parent.offsetHeight);
-	sketchCanvas.parent("canvas-holder");
-
-
+	sketchCanvas.parent("canvas-holder");*/
 }
 
 const r1 = 150;
@@ -48,7 +46,7 @@ function trackPoint() {
 
 function getInput() {
 	//move target point following mouse
-	mouseV = createVector(mouseX - r1 - 10, mouseY - r1 - 10);
+	mouseV = createVector(mouseX - r1 - 10, mouseY - r1 - 30);
 	mouseV.limit(r1 - 5);
 	tx -= (tx - mouseV.x) / inputSmoothing;
 	ty -= (ty - mouseV.y) / inputSmoothing;
@@ -58,7 +56,10 @@ function drawPrinter() {
 	textAlign(CENTER, CENTER);
 
 	//Draw the user input
-	translate(r1 + 10, r1 + 10);
+	translate(r1 + 10, r1 + 30);
+	fill(200);
+	textSize(20);
+	text("BUILD PLATE", 0, -r1 - 15);
 	fill(255, 255, 255);
 	circle(0, 0, r1 * 2);
 	line(0, 0, 0, -r1);
@@ -70,6 +71,7 @@ function drawPrinter() {
 	text("W", +r1 - 10, 0);
 
 
+
 	fill(0, 200, 200, 100);
 	textSize(50);
 	text("×", tx, ty);
@@ -77,7 +79,10 @@ function drawPrinter() {
 	resetMatrix();
 
 	//Draw the build plate
-	translate(r1 * 4, r1 + 10);
+	translate(r1 * 4, r1 + 30);
+	fill(200);
+	textSize(20);
+	text("BUILD PLATE + PRINT HEAD", 0, -r1 - 15);
 	rotate(a1);
 	fill(255, 255, 255);
 	circle(0, 0, r1 * 2);
@@ -93,13 +98,13 @@ function drawPrinter() {
 	fill(0, 200, 200, 100);
 	textSize(50);
 	//Draw the target point on the plate
-	translate(r1 * 4, r1 + 10);
+	translate(r1 * 4, r1 + 30);
 	rotate(a1);
 	resetMatrix();
 
 	//Draw the rotating head
 	fill(100, 100, 0, 50);
-	translate(r1 * 4, r1 + 10);
+	translate(r1 * 4, r1 + 30);
 	translate(0, r2);
 	rotate(a2);
 	//circle(0,0, r2*2);
@@ -108,13 +113,13 @@ function drawPrinter() {
 	resetMatrix();
 
 	//Draw the calculated position of the target after rotating plate
-	translate(r1 * 4, r1 + 10);
+	translate(r1 * 4, r1 + 30);
 	fill(0, 200, 200, 100);
 	text("×", p1x, p1y);
 	resetMatrix();
 
 	//Draw the calculated position of the head
-	translate(r1 * 4, r1 + 10);
+	translate(r1 * 4, r1 + 30);
 	fill(200, 0, 0, 100);
 	text("+", hx, hy);
 	resetMatrix();
