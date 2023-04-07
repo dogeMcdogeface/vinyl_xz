@@ -114,7 +114,7 @@ function drawPrinter() {
 	pop();
 
 	//--------- DRAW BUILD TABLE ---------------------------------------//
-	translate(r1 * 4, r1 + 30);
+	translate(r1 * 4, r1);
 	push();
 	stroke(0, 0);
 	fill(200);
