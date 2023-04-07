@@ -7,8 +7,13 @@ class Rotor {
         this.radius = r && r.radius || 0;
     }
 
-    moveTo(newAngle) {	//implement physics motion here...
+    moveTo(newAngle) {	// TODO implement physics motion here...
         this.angle -= (this.angle - newAngle) / 6;
+
+        //angle += speed
+        //speed += accel
+        //accel = force/mass
+
         this.angle = normalizeAngle(this.angle);
     }
 }

@@ -33,13 +33,13 @@ function computeGoal() {
 }
 
 //----------- SIMULATE PRINTER MOVEMENT -------------------------------------------------------------//
-function computeReal() {	//Implement PID here
+function computeReal() {	//TODO Implement PID here
 	real.head.moveTo(zeroCross(goal.head.angle, sens.head.angle));
 	real.plate.moveTo(zeroCross(goal.plate.angle, sens.plate.angle));
 }
 
 //----------- SIMULATE PRINTER SENSOR READINGS ------------------------------------------------------//
-function computeMeas() {	//Implement sensor jitter + low resolution here
+function computeMeas() {	//TODO Implement sensor jitter + low resolution here
 	sens.head.angle =  real.head.angle;
 	sens.plate.angle = real.plate.angle;
 }
@@ -49,32 +49,6 @@ function computeMeas() {	//Implement sensor jitter + low resolution here
 function zeroCross(a, b) {
 	return a += (b - a > Math.PI) ? Math.PI * 2 : (b - a < -Math.PI) ? -Math.PI * 2 : 0;
 }
-function normalizeAngle(a) {			//range reduction
+function normalizeAngle(a) {	//range reduction
 	return (a + TWO_PI) % TWO_PI;
-}
-
-
-//----------- PRINT DEBUG INFO ----------------------------------------------------------------------//
-let debugObj = {};
-
-function debug() {
-	debugObj.target = {
-		x: `${round(target.x, 0)}`,
-		y: `${round(target.y, 0)}`,
-		curr: `${targetIndex} / ${targets.length}`,
-	};
-
-	debugObj.plate = {
-		angle: `${round(real.plate.angle * 180 / PI, 0)}°`,
-		goal: `${round(goal.plate.angle * 180 / PI, 0)}°`,
-		error: `${round((real.plate.angle - goal.plate.angle) * 180 / PI, 2)}°`
-	};
-
-	debugObj.head = {
-		angle: `${round(real.head.angle * 180 / PI, 0)}°`,
-		goal: `${round(goal.head.angle * 180 / PI, 0)}°`,
-		error: `${round((real.head.angle - goal.head.angle) * 180 / PI, 2)}°`
-	};
-
-	displayDebug(debugObj);
 }

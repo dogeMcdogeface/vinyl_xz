@@ -50,6 +50,31 @@ function getUserInput() {
     }
 }
 
+
+//----------- PRINT DEBUG INFO ----------------------------------------------------------------------//
+let debugObj = {};
+
+function debug() {
+    debugObj.target = {
+        x: `${round(target.x, 0)}`,
+        y: `${round(target.y, 0)}`,
+        curr: `${targetIndex} / ${targets.length}`,
+    };
+
+    debugObj.plate = {
+        angle: `${round(real.plate.angle * 180 / PI, 0)}°`,
+        goal: `${round(goal.plate.angle * 180 / PI, 0)}°`,
+        error: `${round((real.plate.angle - goal.plate.angle) * 180 / PI, 2)}°`
+    };
+
+    debugObj.head = {
+        angle: `${round(real.head.angle * 180 / PI, 0)}°`,
+        goal: `${round(goal.head.angle * 180 / PI, 0)}°`,
+        error: `${round((real.head.angle - goal.head.angle) * 180 / PI, 2)}°`
+    };
+    displayDebug(debugObj);
+}
+
 //----------- DRAW GRAPHICS -------------------------------------------------------------------------//
 function render() {
     background(70);
