@@ -1,0 +1,60 @@
+html {
+	margin: 0;
+	padding: 0;
+}
+
+h2,
+p {
+	margin: 1ch;
+	padding: 0;
+}
+
+body {
+	margin: 3px;
+	padding: 0;
+	box-sizing: border-box;
+}
+
+p {
+	padding-left: 1ch;
+}
+
+#content {
+	height: auto;
+	width: auto;
+	display: flex;
+	flex-wrap: wrap;
+	background-color: #464646;
+
+}
+
+#canvas-holder {
+	flex: 1 1 auto;
+	margin: 0;
+	border: none;
+}
+
+#debug-holder {
+	flex: 100 100 auto;
+	color: white;
+	background-color: #363535;
+}
+
+#debug-holder table {
+	width: 100%;
+	flex: 100 100 auto;
+	border-collapse: collapse;
+	text-transform: capitalize;
+	font-family: monospace, monospace;
+}
+
+#debug-holder table td {
+	border: 1px solid lightgray;
+	min-width: 8ch;
+}
+
+.var {
+	text-align: center;
+	background-color: #4E4C4C;
+
+}
