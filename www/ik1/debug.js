@@ -1,6 +1,6 @@
 let debugHolder = document.getElementById("debug-holder");
 
-
+//----------- PRINT DEBUG TO DOM --------------------------------------------------------------------//
 function displayDebug(obj) {
 	debugHolder.innerHTML = "";
 	const table = document.createElement('table');
@@ -8,8 +8,6 @@ function displayDebug(obj) {
 	for (const [key, value] of Object.entries(obj)) {
 		const row = table.insertRow();
 		row.insertCell().appendChild(document.createTextNode(`${key}`));
-
-
 		for (const [subKey, subValue] of Object.entries(value)) {
 			const keyEl = document.createElement("div");
 			keyEl.innerText = `${subKey}`;

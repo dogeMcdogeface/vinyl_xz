@@ -39,6 +39,9 @@ p {
 	color: white;
 	background-color: #363535;
 }
+#slider-holder {
+	flex: 100 100 auto;
+}
 
 #debug-holder table {
 	width: 100%;

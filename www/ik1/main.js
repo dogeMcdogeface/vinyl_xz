@@ -9,10 +9,11 @@ let targets = [];
 let readOuts = [];
 
 function setup() {
-    const sketchCanvas = createCanvas(real.plate.radius * 5 + 20, real.plate.radius + real.head.radius + 100);
+    const sketchCanvas = createCanvas(real.disk.radius * 5 + 20, real.disk.radius + real.head.radius + 100);
     sketchCanvas.parent(document.getElementById('canvas-holder'));
     frameRate(1000);
     textAlign(CENTER, CENTER);
+    setupSystems();
 }
 
 function draw() {
@@ -25,24 +26,23 @@ function draw() {
 
 //----------- GET TARGET TO TRACK FROM MOUSE INPUT --------------------------------------------------//
 function getUserInput() {
-    let mouseV = createVector(mouseX - real.plate.radius - 10, mouseY - real.plate.radius - 30);
-    mouseV.limit(real.plate.radius - 5);
+    let mouseV = createVector(mouseX - real.disk.radius - 10, mouseY - real.disk.radius - 30);
+    mouseV.limit(real.disk.radius - 5);
 
     if (!targets.length) {
         //if there are no targets, move target point following mouse
         target.x -= (target.x - mouseV.x) / inputSmoothing;
         target.y -= (target.y - mouseV.y) / inputSmoothing;
     } else {
-        if (abs(real.plate.angle - goal.plate.angle) < 0.002) {
+        if (abs(goal.disk.angle - sens.disk.angle) < 0.02 && abs(goal.head.angle - sens.head.angle) < 0.02) {
             targetIndex += 1;
         }
         targetIndex %= targets.length;
         target =  targets[targetIndex];
     }
 
-    if(!targets.length || !targetIndex){
-        readOuts = [];
-    }
+    readOuts = readOuts.slice(readOuts.length - 1000);
+    if(!targets.length || targetIndex === targets.length) readOuts = [];
 
     if (mouseIsPressed) {
         if (mouseButton === RIGHT) {
@@ -60,16 +60,37 @@ function getUserInput() {
 //----------- PRINT DEBUG INFO ----------------------------------------------------------------------//
 let debugObj = {};
 
+let trackFPS = [];
+setInterval(()=>{
+    debugObj.stat.minFPS = round(Math.min(...trackFPS), 1);
+    debugObj.stat.avgFPS = round(arrAvg(trackFPS), 1);
+    trackFPS = [];
+}, 1000);
+
 function debug() {
+    debugObj.stat = !debugObj.stat ? {} : debugObj.stat;
+    trackFPS[trackFPS.length] = frameRate();
+    debugObj.stat.fps = round(frameRate(),1);
+
     debugObj.target = {
         x: `${round(target.x, 0)}`,
         y: `${round(target.y, 0)}`,
         curr: `${targetIndex} / ${targets.length}`,
     };
 
+
+
     debugObj.goal = goal.debug();
     debugObj.real = real.debug();
     debugObj.sens = sens.debug();
+    debugObj.diskPID =  {
+        pid: `${real.disk.PID.p}\t| ${real.disk.PID.i}\t| ${real.disk.PID.d}`,
+        e: `${round(real.disk.PID.lastError, 5)}`,
+    };
+    debugObj.headPID =  {
+        pid: `${real.head.PID.p}\t| ${real.head.PID.i}\t| ${real.head.PID.d}`,
+        e: `${round(real.head.PID.lastError, 5)}`,
+    };
     displayDebug(debugObj);
 }
 
@@ -79,16 +100,16 @@ function render() {
     //--------- DRAW USER INPUT ----------------------------------------//
     translate(10, 30);
     push();
-    translate(real.plate.radius, real.plate.radius);
+    translate(real.disk.radius, real.disk.radius);
     stroke(0, 0);
     fill(200);
     textSize(20);
-    text("BUILD PLATE", 0, -real.plate.radius - 15);
-    drawPlate(real.plate.radius);
+    text("BUILD PLATE", 0, -real.disk.radius - 15);
+    drawdisk(real.disk.radius);
     stroke(50, 50);
     targets.forEach(point => drawPT(1, 5, point.x, point.y));
     for (let i = 1; i < readOuts.length; i++) {
-        stroke(50 + (200*i/readOuts.length),0,0, 100);
+        stroke(50 + (200*i/readOuts.length),0,0, 255);
         line(readOuts[i].x, readOuts[i].y, readOuts[i - 1].x, readOuts[i - 1].y);
     }
     stroke(0, 200, 200, 100);
@@ -97,14 +118,14 @@ function render() {
     pop();
 
     //--------- DRAW BUILD TABLE ---------------------------------------//
-    translate(real.plate.radius * 4, real.plate.radius);
+    translate(real.disk.radius * 4, real.disk.radius);
     push();
     stroke(0, 0);
     fill(200);
     textSize(20);
-    text("BUILD PLATE + PRINT HEAD", 0, -real.plate.radius - 15);
-    rotate(real.plate.angle);
-    drawPlate(real.plate.radius);
+    text("BUILD PLATE + PRINT HEAD", 0, -real.disk.radius - 15);
+    rotate(real.disk.angle);
+    drawdisk(real.disk.radius);
     fill(0, 0);
     stroke(50, 50);
     for (let i = 1; i < targets.length; i++) {
@@ -123,11 +144,11 @@ function render() {
     drawPT(0, 5, 0, -real.head.radius);
     pop();
 
-    //--------- DRAW DESIRED PLATE ANGLE -------------------------------//
+    //--------- DRAW DESIRED disk ANGLE -------------------------------//
     push();
     fill(0, 0);
     stroke(0, 255, 255);
-    drawAngle(real.plate.radius * 2 + 5, goal.plate.angle);
+    drawAngle(real.disk.radius * 2 + 5, goal.disk.angle);
     pop();
 
     //--------- DRAW DESIRED HEAD ANGLE --------------------------------//
@@ -156,7 +177,7 @@ function drawAngle(r, a) {
     drawingContext.setLineDash([0]);
 }
 
-function drawPlate(r) {
+function drawdisk(r) {
     stroke(0);
     fill(255, 255, 255);
     circle(0, 0, r * 2);
@@ -181,4 +202,4 @@ function drawHead(r) {
     line(0, 0, 0, -r);
 }
 
-
+const arrAvg = arr => arr.reduce((a,b) => a + b, 0) / arr.length
