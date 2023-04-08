@@ -6,6 +6,8 @@ const targetMinDist = 10;
 let targetIndex = 0;
 let targets = [];
 
+let readOuts = [];
+
 function setup() {
     const sketchCanvas = createCanvas(real.plate.radius * 5 + 20, real.plate.radius + real.head.radius + 100);
     sketchCanvas.parent(document.getElementById('canvas-holder'));
@@ -38,6 +40,10 @@ function getUserInput() {
         target =  targets[targetIndex];
     }
 
+    if(!targets.length || !targetIndex){
+        readOuts = [];
+    }
+
     if (mouseIsPressed) {
         if (mouseButton === RIGHT) {
             targets = [];
@@ -61,17 +67,9 @@ function debug() {
         curr: `${targetIndex} / ${targets.length}`,
     };
 
-    debugObj.plate = {
-        angle: `${round(real.plate.angle * 180 / PI, 0)}°`,
-        goal: `${round(goal.plate.angle * 180 / PI, 0)}°`,
-        error: `${round((real.plate.angle - goal.plate.angle) * 180 / PI, 2)}°`
-    };
-
-    debugObj.head = {
-        angle: `${round(real.head.angle * 180 / PI, 0)}°`,
-        goal: `${round(goal.head.angle * 180 / PI, 0)}°`,
-        error: `${round((real.head.angle - goal.head.angle) * 180 / PI, 2)}°`
-    };
+    debugObj.goal = goal.debug();
+    debugObj.real = real.debug();
+    debugObj.sens = sens.debug();
     displayDebug(debugObj);
 }
 
@@ -89,6 +87,10 @@ function render() {
     drawPlate(real.plate.radius);
     stroke(50, 50);
     targets.forEach(point => drawPT(1, 5, point.x, point.y));
+    for (let i = 1; i < readOuts.length; i++) {
+        stroke(50 + (200*i/readOuts.length),0,0, 100);
+        line(readOuts[i].x, readOuts[i].y, readOuts[i - 1].x, readOuts[i - 1].y);
+    }
     stroke(0, 200, 200, 100);
     if (targets.length === 0) stroke(0, 0, 200, 100);
     drawPT(1, 10, target.x, target.y);

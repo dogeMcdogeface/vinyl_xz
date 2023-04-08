@@ -34,16 +34,29 @@ function computeGoal() {
 
 //----------- SIMULATE PRINTER MOVEMENT -------------------------------------------------------------//
 function computeReal() {	//TODO Implement PID here
-	real.head.moveTo(zeroCross(goal.head.angle, sens.head.angle));
 	real.plate.moveTo(zeroCross(goal.plate.angle, sens.plate.angle));
+	real.head.moveTo(zeroCross(goal.head.angle, sens.head.angle));
 }
 
 //----------- SIMULATE PRINTER SENSOR READINGS ------------------------------------------------------//
 function computeMeas() {	//TODO Implement sensor jitter + low resolution here
-	sens.head.angle =  real.head.angle;
 	sens.plate.angle = real.plate.angle;
+	sens.head.angle =  real.head.angle;
+	readOuts[readOuts.length] = computePos(sens.plate.angle, sens.head.angle);
 }
 
+//----------- CONVERT SENSED ANGLE READINGS BACK TO CARTESIAN POINT ---------------------------------//
+function computePos(a,b) {
+	//Calculate absolute head position
+	let hx = sin(b)*(real.head.radius);
+	let hy = cos(b)*(-real.head.radius)+real.head.radius;
+
+	//Calculate head position relative to plate
+	x = cos(-a)*(hx)-sin(-a)*(hy);
+	y = sin(-a)*(hx)+cos(-a)*(hy);
+
+	return{x,y};
+}
 
 //----------- HANDLE ZERO POINT CROSSING ------------------------------------------------------------//
 function zeroCross(a, b) {
