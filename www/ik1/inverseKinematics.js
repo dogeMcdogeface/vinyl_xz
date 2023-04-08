@@ -1,6 +1,6 @@
 
 //----------- SIMULATION VARIABLES ------------------------------------------------------------------//
-const disk = {radius: 150, mass: 100, maxSpeed: PI, maxAccel: PI, PID: {p: 10, i: 0, d: 0.1}}; //Build disk
+const disk = {radius: 150, mass: 100, maxSpeed: PI, maxAccel: PI, PID: {p: 10, i: 0, d: 100}}; //Build disk
 const head = {radius: 200, mass: 100, maxSpeed: PI, maxAccel: PI, PID: {p: 10, i: 0, d: 0.1}}; //Print Head
 
 
@@ -35,6 +35,8 @@ function computeGoal() {
 	goal.disk.angle = PI - (2 * atan((sqrt(x * x + y * y - hx * hx) + y) / (x - hx)));
 }
 
+
+let PIDspeed = { p: 2000, i: 0, d: 1000, d: 100};
 //----------- SIMULATE PRINTER MOVEMENT -------------------------------------------------------------//
 function computeReal() {	//TODO Implement PID here
 	const goalP = zeroCross(goal.disk.angle, sens.disk.angle);
@@ -42,7 +44,9 @@ function computeReal() {	//TODO Implement PID here
 
 	//real.disk.moveTo(goalP);
 	//real.head.moveTo(goalH);
-	real.disk.speed = PID(goalP, sens.disk.angle, real.disk.PID);
+	let goalSpeed = PID(goalP, sens.disk.angle, real.disk.PID);
+	real.disk.torque = PID(goalSpeed, real.disk.speed, PIDspeed);
+	//real.disk.speed = PID(goalP, sens.disk.angle, real.disk.PID);
 	real.head.speed = PID(goalH, sens.head.angle, real.head.PID);
 }
 
