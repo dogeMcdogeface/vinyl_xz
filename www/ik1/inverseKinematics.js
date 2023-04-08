@@ -48,7 +48,7 @@ function computeReal() {	//TODO Implement PID here
 
 
 
-
+//----------- COMPUTE PID OUTPUT --------------------------------------------------------------------//
 function PID(goal, current, pid) {
 	pid.integral = (pid.integral === undefined) ? 0 : pid.integral;
 	pid.lastError = (pid.lastError === undefined) ? 0 : pid.lastError;

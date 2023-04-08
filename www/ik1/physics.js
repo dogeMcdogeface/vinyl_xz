@@ -1,3 +1,4 @@
+//----------- PHYSICS CONSTANTS ---------------------------------------------------------------------//
 const TIME_SECOND = 1000;
 
 const PI = Math.PI;
@@ -5,6 +6,7 @@ const TWO_PI = PI * 2;
 const HALF_PI = PI / 2;
 const QUARTER_PI = PI / 4;
 
+//----------- ROTOR CLASS ---------------------------------------------------------------------------//
 class Rotor {
     constructor(r) {
         this.maxAccel = r && r.maxAccel || 0;   // rad/sec
@@ -17,7 +19,7 @@ class Rotor {
         this.PID = r && r.PID || {p: .0, i: .0, d: .0};
     }
 
-    moveTo(newAngle) {
+    moveTo(newAngle) {   //Rough lerp towards angle
         this.angle -= (this.angle - newAngle) / 6;
         this.angle = normalizeAngle(this.angle);
     }
@@ -36,7 +38,7 @@ class Rotor {
     get speed(){return this._speed;}
 }
 
-//----------------------------------//
+//----------- SYSTEM CLASS --------------------------------------------------------------------------//
 class System {
     constructor(p, h) {
         this.disk = new Rotor(p);
@@ -60,6 +62,7 @@ class System {
 }
 
 
+//----------- UTILITY FUNCTIONS ---------------------------------------------------------------------//
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 const clampIfExist = (num, max) => !max ? num : clamp(num, -max, max);
 const normalizeAngle = (a) => (a + TWO_PI) % TWO_PI;

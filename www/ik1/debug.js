@@ -1,5 +1,6 @@
 let debugHolder = document.getElementById("debug-holder");
 
+//----------- PRINT DEBUG TO DOM --------------------------------------------------------------------//
 function displayDebug(obj) {
 	debugHolder.innerHTML = "";
 	const table = document.createElement('table');
