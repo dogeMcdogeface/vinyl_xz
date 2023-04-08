@@ -42,7 +42,7 @@ function getUserInput() {
     }
 
     readOuts = readOuts.slice(readOuts.length - 1000);
-    if(!targets.length || targetIndex === targets.length) readOuts = [];
+    if(!targets.length || targetIndex === 0 ) readOuts = readOuts.slice(readOuts.length - 1);
 
     if (mouseIsPressed) {
         if (mouseButton === RIGHT) {
